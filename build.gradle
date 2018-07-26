@@ -1,0 +1,37 @@
+buildscript {
+    ext {
+        kotlinVersion = "1.2.51"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+plugins {
+    id "net.researchgate.release" version "2.6.0"
+}
+
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: "idea"
+apply plugin: "kotlin"
+
+group "io.zhudy.kitty"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect"
+
+    compileOnly "io.javalin:javalin:1.7.0"
+}
