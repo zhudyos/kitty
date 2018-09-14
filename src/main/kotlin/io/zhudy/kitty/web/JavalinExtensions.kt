@@ -1,13 +1,18 @@
 package io.zhudy.kitty.web
 
 import io.javalin.Context
+import io.zhudy.kitty.domain.Pageable
+import io.zhudy.kitty.domain.Sort
+import io.zhudy.kitty.domain.parseSort
+import io.zhudy.kitty.web.Constants.HTTP_FORM_PARAM_NAME
+import io.zhudy.kitty.web.Constants.HTTP_PATH_PARAM_NAME
+import io.zhudy.kitty.web.Constants.HTTP_QUERY_PARAM_NAME
 
 /**
+ * `javalin` 扩展函数。
+ *
  * @author Kevin Zou (kevinz@weghst.com)
  */
-private const val path = "path"
-private const val query = "query"
-private const val form = "form"
 
 /**
  * 返回 `path` 参数。
@@ -15,47 +20,47 @@ private const val form = "form"
  * `boolean` 取值设定。
  *
  * - true/false
- * - not 0/0
+ * - 1/not 1
  * - on/off
  *
  * @param name 参数名称
  */
-fun Context.pathBoolean(name: String) = requestBooleanParam(this, path, name)
+fun Context.pathBoolean(name: String) = requestBooleanParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
  * 返回 `path` 参数。
  *
  * @param name 参数名称
  */
-fun Context.pathInt(name: String) = requestIntParam(this, path, name)
+fun Context.pathInt(name: String) = requestIntParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
  * 返回 `path` 参数。
  *
  * @param name 参数名称
  */
-fun Context.pathLong(name: String) = requestLongParam(this, path, name)
+fun Context.pathLong(name: String) = requestLongParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
  * 返回 `path` 参数。
  *
  * @param name 参数名称
  */
-fun Context.pathDouble(name: String) = requestDoubleParam(this, path, name)
+fun Context.pathDouble(name: String) = requestDoubleParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
  * 返回 `path` 参数。
  *
  * @param name 参数名称
  */
-fun Context.pathString(name: String) = requestStringParam(this, path, name)
+fun Context.pathString(name: String) = requestStringParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
  * 返回 `path` 参数并去除前后空格。
  *
  * @param name 参数名称
  */
-fun Context.pathTrimString(name: String) = requestTrimStringParam(this, path, name)
+fun Context.pathTrimString(name: String) = requestTrimStringParam(this, HTTP_PATH_PARAM_NAME, name)
 
 // =================================================================================================================
 
@@ -65,47 +70,47 @@ fun Context.pathTrimString(name: String) = requestTrimStringParam(this, path, na
  * `boolean` 取值设定。
  *
  * - true/false
- * - not 0/0
+ * - 1/not 1
  * - on/off
  *
  * @param name 参数名称
  */
-fun Context.queryBoolean(name: String) = requestBooleanParam(this, query, name)
+fun Context.queryBoolean(name: String) = requestBooleanParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
  * 返回 `query` 参数。
  *
  * @param name 参数名称
  */
-fun Context.queryInt(name: String) = requestIntParam(this, query, name)
+fun Context.queryInt(name: String) = requestIntParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
  * 返回 `query` 参数。
  *
  * @param name 参数名称
  */
-fun Context.queryLong(name: String) = requestLongParam(this, query, name)
+fun Context.queryLong(name: String) = requestLongParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
  * 返回 `query` 参数。
  *
  * @param name 参数名称
  */
-fun Context.queryDouble(name: String) = requestDoubleParam(this, query, name)
+fun Context.queryDouble(name: String) = requestDoubleParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
  * 返回 `query` 参数。
  *
  * @param name 参数名称
  */
-fun Context.queryString(name: String) = requestStringParam(this, query, name)
+fun Context.queryString(name: String) = requestStringParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
  * 返回 `query` 参数并去除前后空格。
  *
  * @param name 参数名称
  */
-fun Context.queryTrimString(name: String) = requestTrimStringParam(this, query, name)
+fun Context.queryTrimString(name: String) = requestTrimStringParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 // =================================================================================================================
 
@@ -115,47 +120,64 @@ fun Context.queryTrimString(name: String) = requestTrimStringParam(this, query, 
  * `boolean` 取值设定。
  *
  * - true/false
- * - not 0/0
+ * - 1/not 1
  * - on/off
  *
  * @param name 参数名称
  */
-fun Context.formBoolean(name: String) = requestBooleanParam(this, form, name)
+fun Context.formBoolean(name: String) = requestBooleanParam(this, HTTP_FORM_PARAM_NAME, name)
 
 /**
  * 返回 `form` 参数。
  *
  * @param name 参数名称
  */
-fun Context.formInt(name: String) = requestIntParam(this, form, name)
+fun Context.formInt(name: String) = requestIntParam(this, HTTP_FORM_PARAM_NAME, name)
 
 /**
  * 返回 `form` 参数。
  *
  * @param name 参数名称
  */
-fun Context.formLong(name: String) = requestLongParam(this, form, name)
+fun Context.formLong(name: String) = requestLongParam(this, HTTP_FORM_PARAM_NAME, name)
 
 /**
  * 返回 `form` 参数。
  *
  * @param name 参数名称
  */
-fun Context.formDouble(name: String) = requestDoubleParam(this, form, name)
+fun Context.formDouble(name: String) = requestDoubleParam(this, HTTP_FORM_PARAM_NAME, name)
 
 /**
  * 返回 `form` 参数。
  *
  * @param name 参数名称
  */
-fun Context.formString(name: String) = requestStringParam(this, form, name)
+fun Context.formString(name: String) = requestStringParam(this, HTTP_FORM_PARAM_NAME, name)
 
 /**
  * 返回 `form` 参数并去除前后空格。
  *
  * @param name 参数名称
  */
-fun Context.formTrimString(name: String) = requestTrimStringParam(this, form, name)
+fun Context.formTrimString(name: String) = requestTrimStringParam(this, HTTP_FORM_PARAM_NAME, name)
+
+/**
+ * 排序参数。
+ */
+fun Context.sortParam(): Sort {
+    val s = this.queryParam("sort")
+    return parseSort(s)
+}
+
+/**
+ * 分页参数。
+ */
+fun Context.pageParam(): Pageable {
+    val p = queryInt("page")
+    val s = queryInt("size")
+    return Pageable(p, s)
+}
 
 /**
  * 获取客户端真实 IP。
@@ -171,7 +193,6 @@ fun Context.clientIp(): String {
     if (ip != null && ip.isNotEmpty()) {
         return ip
     }
-
     ip = this.header("x-forwarded-for")
     if (ip != null && ip.isNotEmpty()) {
         ip = ip.split(",").firstOrNull()
@@ -179,7 +200,6 @@ fun Context.clientIp(): String {
     if (ip != null && ip.isNotEmpty()) {
         return ip
     }
-
     return this.ip()
 }
 
@@ -191,7 +211,7 @@ fun Context.ua() = userAgent() ?: ""
 // =================================================================================================================
 private fun requestBooleanParam(request: Context, where: String, name: String): Boolean {
     val v = requestTrimStringParam(request, where, name).toLowerCase()
-    return v == "true" || v != "0" || v == "on"
+    return v == "true" || v == "1" || v == "on"
 }
 
 private fun requestIntParam(request: Context, where: String, name: String): Int {
@@ -238,7 +258,7 @@ private fun requestTrimStringParam(request: Context, where: String, name: String
 }
 
 private fun requestParam(request: Context, where: String, name: String): String? = when {
-    path == where -> request.param(name)
-    form == where -> request.formParam(name)
+    HTTP_PATH_PARAM_NAME == where -> request.pathParam(name)
+    HTTP_FORM_PARAM_NAME == where -> request.formParam(name)
     else -> request.queryParam(name)
 }
