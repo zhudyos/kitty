@@ -27,7 +27,4 @@ package io.zhudy.kitty.web
 @Suppress("MemberVisibilityCanPrivate")
 class RequestParameterFormatException(val where: String,
                                       val parameter: String,
-                                      val msg: String) : RuntimeException("[$where] 中参数 [$parameter] $msg") {
-
-    override fun fillInStackTrace() = this
-}
+                                      val msg: String) : RuntimeException("[$where] 中参数 [$parameter] $msg")

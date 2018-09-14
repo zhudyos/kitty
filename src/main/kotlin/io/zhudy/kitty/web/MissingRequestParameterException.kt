@@ -25,7 +25,4 @@ package io.zhudy.kitty.web
  */
 @Suppress("MemberVisibilityCanPrivate")
 class MissingRequestParameterException(val where: String,
-                                       val parameter: String) : RuntimeException("""缺少参数 "$parameter" 在 "$where" 中""") {
-
-    override fun fillInStackTrace() = this
-}
+                                       val parameter: String) : RuntimeException("""缺少参数 "$parameter" 在 "$where" 中""")
