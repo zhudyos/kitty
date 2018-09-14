@@ -1,7 +1,7 @@
 package io.zhudy.kitty.biz
 
 /**
- * 经典错误码。
+ * 公共错误码。
  */
 enum class PubBizCodes(override val code: Int, override val msg: String, override val status: Int = 400) : BizCode {
     /**
@@ -25,9 +25,5 @@ enum class PubBizCodes(override val code: Int, override val msg: String, overrid
      */
     C_998(998, "HTTP Request 参数类型错误"),
     C_999(999, "HTTP Request 参数错误"),
-
-    // ====================================================================//
-    C_1000(1000, "用户未找到"),
-    C_1005(1005, "密码不匹配"),
     ;
 }

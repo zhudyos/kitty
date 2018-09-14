@@ -3,8 +3,6 @@ package io.zhudy.kitty.biz
 /**
  * 业务异常，与[BizCode]联合使用。
  *
- * 该异常类型重写了[fillInStackTrace]方法，不会记录详细的异常堆栈信息。
- *
  * @author Kevin Zou <kevinz@weghst.com>
  */
 class BizCodeException : RuntimeException {
@@ -31,11 +29,6 @@ class BizCodeException : RuntimeException {
     constructor(bizCode: BizCode, e: Exception) : super(e) {
         this.bizCode = bizCode
     }
-
-    /**
-     * 不记录堆栈详细信息。
-     */
-    override fun fillInStackTrace() = this
 
     /**
      * 重写 message 方法, 在打印日志是会调用该方法打印日志信息。
