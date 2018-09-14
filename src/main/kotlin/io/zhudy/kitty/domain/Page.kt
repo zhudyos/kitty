@@ -36,5 +36,5 @@ data class Page<out T>(
     /**
      * 总页数。
      */
-    val totalPages: Int = if (pageable.size == 0) 1 else Math.ceil(totalItems.toDouble() / pageable.size.toDouble()).toInt()
+    val totalPages get() = if (pageable.size == 0) 1 else Math.ceil(totalItems.toDouble() / pageable.size.toDouble()).toInt()
 }

@@ -31,7 +31,7 @@ data class Pageable(
         val size: Int = 15
 ) {
 
-    val offset = (page - 1) * size
-    val begin = offset + 1
-    val end = offset + size
+    val offset get() = (page - 1) * size
+    val begin get() = offset + 1
+    val end get() = offset + size
 }
