@@ -20,6 +20,7 @@ plugins {
 
 apply plugin: "java"
 apply plugin: "maven"
+apply plugin: "signing"
 apply plugin: "idea"
 apply plugin: "kotlin"
 
@@ -45,5 +46,70 @@ license {
     ext {
         year = "2018-${Calendar.getInstance().get(Calendar.YEAR)}"
         author = "the original author or authors"
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+if (project.hasProperty("signing.keyId")) {
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: System.env.OSSRH_USERNAME, password: System.env.OSSRH_PASSWORD)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: System.env.OSSRH_USERNAME, password: System.env.OSSRH_PASSWORD)
+                }
+
+                pom.project {
+                    name "kitty"
+                    artifactId "kitty"
+                    packaging "jar"
+                    description "Kotlin 工具包"
+                    url "https://github.com/zhudyos/kitty"
+
+                    scm {
+                        url "https://github.com/zhudyos/kitty"
+                        connection "scm:git:git@github.com:zhudyos/kitty.git"
+                        developerConnection "scm:git:git@github.com:zhudyos/kitty.git"
+                    }
+
+                    licenses {
+                        license {
+                            name "The Apache License, Version 2.0"
+                            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id "kevin70"
+                            name "Kevin Zou"
+                            email "kevinz@weghst.com"
+                        }
+                    }
+                }
+            }
+        }
     }
 }
