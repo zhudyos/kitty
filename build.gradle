@@ -15,12 +15,14 @@ buildscript {
 
 plugins {
     id "net.researchgate.release" version "2.6.0"
+    id "com.github.hierynomus.license" version "0.14.0"
 }
 
 apply plugin: "java"
 apply plugin: "maven"
 apply plugin: "idea"
 apply plugin: "kotlin"
+apply plugin: "com.github.hierynomus.license"
 
 group "io.zhudy.kitty"
 
@@ -37,4 +39,12 @@ dependencies {
     compileOnly "io.javalin:javalin:2.1.1"
     compileOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.1"
     compileOnly "org.springframework:spring-webflux:5.0.9.RELEASE"
+}
+
+license {
+    headerURI = com.hierynomus.gradle.license.LicenseBasePlugin.class.getClassLoader().getResource("headers/Apache-2.0").toURI()
+    ext {
+        year = "2018-${Calendar.getInstance().get(Calendar.YEAR)}"
+        author = "the original author or authors"
+    }
 }
