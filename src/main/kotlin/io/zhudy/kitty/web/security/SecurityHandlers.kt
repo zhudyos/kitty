@@ -1,4 +1,4 @@
-package io.zhudy.edu20.web.security
+package io.zhudy.kitty.web.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
