@@ -48,23 +48,7 @@ class BizCodeException : RuntimeException {
     /**
      * 重写 message 方法, 在打印日志是会调用该方法打印日志信息。
      */
-    override val message: String
-        get() {
-            var m = """{"code": ${bizCode.code}, "message": "${bizCode.msg}"}"""
-            if (!super.message.isNullOrEmpty()) {
-                m += ", message: ${super.message}"
-            }
-            if (cause != null) {
-                m += ", cause message: ${cause.message}"
-            }
-            return m
-        }
-
-    /**
-     * 确切的消息。
-     */
-    val exactMessage: String
-        get() = super.message ?: ""
+    override val message: String get() = super.message ?: bizCode.msg
 
     override fun toString(): String {
         return BizCodeException::class.qualifiedName + "${BizCodeException::class.qualifiedName}: $message"

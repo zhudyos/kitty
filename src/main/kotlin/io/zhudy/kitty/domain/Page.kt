@@ -16,6 +16,7 @@
 package io.zhudy.kitty.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import kotlin.math.ceil
 
 /**
  * 分页返回数据类型。
@@ -36,5 +37,5 @@ data class Page<out T>(
     /**
      * 总页数。
      */
-    val totalPages get() = if (pageable.size == 0) 1 else Math.ceil(totalItems.toDouble() / pageable.size.toDouble()).toInt()
+    val totalPages get() = if (pageable.size == 0) 1 else ceil(totalItems.toDouble() / pageable.size.toDouble()).toInt()
 }
