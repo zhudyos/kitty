@@ -6,6 +6,8 @@ import io.zhudy.kitty.biz.PubBizCodes
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.attributeOrNull
 import org.springframework.web.servlet.function.paramOrNull
+import org.springframework.web.servlet.function.remoteAddressOrNull
+import java.util.*
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
@@ -99,11 +101,7 @@ fun ServerRequest.queryInt(name: String) = requestIntParam(this, HTTP_QUERY_PARA
  */
 fun ServerRequest.queryInt(name: String, defValue: Int): Int {
     val v = this.paramOrNull(name) ?: return defValue
-    try {
-        return v.toInt()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, """无法将 "$v" 转换为 int 类型""")
-    }
+    return v.toIntOrNull() ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 int 数字")
 }
 
 /**
@@ -121,11 +119,7 @@ fun ServerRequest.queryLong(name: String) = requestLongParam(this, HTTP_QUERY_PA
  */
 fun ServerRequest.queryLong(name: String, defValue: Long): Long {
     val v = this.paramOrNull(name) ?: return defValue
-    try {
-        return v.toLong()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, """无法将 "$v" 转换为 long 类型""")
-    }
+    return v.toLongOrNull() ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 long 数字")
 }
 
 /**
@@ -143,11 +137,8 @@ fun ServerRequest.queryDouble(name: String) = requestDoubleParam(this, HTTP_QUER
  */
 fun ServerRequest.queryDouble(name: String, defValue: Double): Double {
     val v = this.paramOrNull(name) ?: return defValue
-    try {
-        return v.toDouble()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, """无法将 "$v" 转换为 double 类型""")
-    }
+    return v.toDoubleOrNull()
+            ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 double 数字")
 }
 
 /**
@@ -165,6 +156,35 @@ fun ServerRequest.queryString(name: String) = requestStringParam(this, HTTP_QUER
 fun ServerRequest.queryTrimString(name: String) = requestTrimStringParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 // =================================================================================================================
+
+/**
+ * 返回客户端 IP 地址。
+ *
+ * 1. http header `x-real-ip`
+ * 2. http header `x-forwarded-for`
+ * 3. `remote address`
+ *
+ * 根据以上顺序获取客户端 IP。
+ */
+fun ServerRequest.ip(): String {
+    val realIp = headers().header("x-real-ip").firstOrNull()
+    if (realIp != null) {
+        return realIp
+    }
+    val xff = headers().header("x-forwarded-for").firstOrNull()?.split(",")
+    if (xff != null && xff.isNotEmpty()) {
+        return xff[0]
+    }
+    return remoteAddressOrNull()?.hostName ?: ""
+}
+
+/**
+ * 返回请求的 `request-id`。如果请求中不包括 `x-request-id` 则自动生成。
+ */
+fun ServerRequest.requestId(): String {
+    return headers().header("x-request-id").firstOrNull() ?: UUID.randomUUID().toString().replace("-", "")
+}
+
 /**
  * 获取用户登录的上下信息。
  */
@@ -175,40 +195,28 @@ fun ServerRequest.userContext(): UserContext {
 
 // =================================================================================================================
 private fun requestBooleanParam(request: ServerRequest, where: String, name: String): Boolean {
-    val v = requestTrimStringParam(request, where, name).toLowerCase()
+    val v = requestStringParam(request, where, name).toLowerCase()
     return v == "true" || v == "1" || v == "on"
 }
 
 private fun requestIntParam(request: ServerRequest, where: String, name: String): Int {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toInt()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 int 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toIntOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 int 数字")
 }
 
 private fun requestLongParam(request: ServerRequest, where: String, name: String): Long {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toLong()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 long 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toLongOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 long 数字")
 }
 
 private fun requestDoubleParam(request: ServerRequest, where: String, name: String): Double {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toDouble()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 double 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toDoubleOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 double 数字")
 }
 
 private fun requestStringParam(request: ServerRequest, where: String, name: String): String {
     val v = requestParam(request, where, name)
-    if (v == null || v.isEmpty()) {
+    if (v.isNullOrEmpty()) {
         throw MissingRequestParameterException(where, name)
     }
     return v
@@ -216,11 +224,10 @@ private fun requestStringParam(request: ServerRequest, where: String, name: Stri
 
 private fun requestTrimStringParam(request: ServerRequest, where: String, name: String): String {
     val v = requestParam(request, where, name)?.trim()
-    if (v == null || v.isEmpty()) {
+    if (v.isNullOrEmpty()) {
         throw MissingRequestParameterException(where, name)
     }
     return v
 }
 
 private fun requestParam(request: ServerRequest, where: String, name: String): String? = if (HTTP_PATH_PARAM_NAME == where) request.pathVariable(name) else request.paramOrNull(name)
-

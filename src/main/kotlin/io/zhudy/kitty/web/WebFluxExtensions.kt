@@ -154,40 +154,28 @@ fun ServerResponse.BodyBuilder.body(o: Any): Mono<ServerResponse> = body(BodyIns
 
 // =================================================================================================================
 private fun requestBooleanParam(request: ServerRequest, where: String, name: String): Boolean {
-    val v = requestTrimStringParam(request, where, name).toLowerCase()
+    val v = requestStringParam(request, where, name).toLowerCase()
     return v == "true" || v == "1" || v == "on"
 }
 
 private fun requestIntParam(request: ServerRequest, where: String, name: String): Int {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toInt()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 int 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toIntOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 int 数字")
 }
 
 private fun requestLongParam(request: ServerRequest, where: String, name: String): Long {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toLong()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 long 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toLongOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 long 数字")
 }
 
 private fun requestDoubleParam(request: ServerRequest, where: String, name: String): Double {
-    val v = requestTrimStringParam(request, where, name)
-    try {
-        return v.toDouble()
-    } catch (e: NumberFormatException) {
-        throw RequestParameterFormatException(where, name, """无法将 "$v" 转换为 double 类型""")
-    }
+    val v = requestStringParam(request, where, name)
+    return v.toDoubleOrNull() ?: throw RequestParameterFormatException(where, name, "\"$v\" 非法的 double 数字")
 }
 
 private fun requestStringParam(request: ServerRequest, where: String, name: String): String {
     val v = requestParam(request, where, name)
-    if (v == null || v.isEmpty()) {
+    if (v.isNullOrEmpty()) {
         throw MissingRequestParameterException(where, name)
     }
     return v
@@ -195,7 +183,7 @@ private fun requestStringParam(request: ServerRequest, where: String, name: Stri
 
 private fun requestTrimStringParam(request: ServerRequest, where: String, name: String): String {
     val v = requestParam(request, where, name)?.trim()
-    if (v == null || v.isEmpty()) {
+    if (v.isNullOrEmpty()) {
         throw MissingRequestParameterException(where, name)
     }
     return v
