@@ -17,12 +17,12 @@ import java.time.ZonedDateTime
  * @author Kevin Zou (kevinz@weghst.com)
  */
 class RestError(
-        var timestamp: ZonedDateTime = ZonedDateTime.now(),
-        var traceId: String = "",
+        val timestamp: ZonedDateTime = ZonedDateTime.now(),
+        val traceId: String = "",
+        val status: Int,
         var path: String = "",
-        var status: Int,
-        var code: Int,
-        var message: String,
-        var details: Set<Any> = emptySet(),
+        val code: Int,
+        val message: String,
+        val details: Set<Any> = emptySet(),
         var stacktrace: List<String> = emptyList()
 )

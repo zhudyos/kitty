@@ -1,16 +1,21 @@
 package io.zhudy.kitty.restful.handlers
 
+import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
-import io.zhudy.kitty.restful.RestExceptionHandler
+import org.springframework.core.annotation.Order
 import org.springframework.web.HttpMediaTypeNotSupportedException
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-class HttpMediaTypeNotSupportedExceptionHandler : RestExceptionHandler<HttpMediaTypeNotSupportedException> {
+@Order(Int.MIN_VALUE + 1000)
+class HttpMediaTypeNotSupportedExceptionHandler : AbstractRestExceptionHandler() {
 
-    override fun handleException(e: HttpMediaTypeNotSupportedException, request: HttpServletRequest): RestError {
-        return RestError(status = 415, code = 415, message = e.message ?: "不支持的 content-type")
+    override fun handleException(ex: Exception): RestError? {
+        if (shouldApplyTo("org.springframework.web.HttpMediaTypeNotSupportedException", ex)) {
+            val e = ex as HttpMediaTypeNotSupportedException
+            return RestError(status = 415, code = 415, message = e.message ?: "不支持的 content-type: ${ex.contentType}")
+        }
+        return null
     }
 }

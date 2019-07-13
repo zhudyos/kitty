@@ -1,15 +1,13 @@
 package io.zhudy.kitty.restful
 
-import javax.servlet.http.HttpServletRequest
-
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-interface RestExceptionHandler<in E : Exception> {
+interface RestExceptionHandler {
 
     /**
      *
      */
-    fun handleException(e: E, request: HttpServletRequest): RestError
+    fun handleException(ex: Exception): RestError?
 
 }

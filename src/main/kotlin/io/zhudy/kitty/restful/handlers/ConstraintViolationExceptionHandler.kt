@@ -1,23 +1,28 @@
 package io.zhudy.kitty.restful.handlers
 
 import io.zhudy.kitty.biz.PubBizCodes
+import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
-import io.zhudy.kitty.restful.RestExceptionHandler
+import org.springframework.core.annotation.Order
 import org.valiktor.ConstraintViolationException
 import org.valiktor.i18n.toMessage
-import javax.servlet.http.HttpServletRequest
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-class ConstraintViolationExceptionHandler : RestExceptionHandler<ConstraintViolationException> {
+@Order(Int.MIN_VALUE + 1000)
+class ConstraintViolationExceptionHandler : AbstractRestExceptionHandler() {
 
-    override fun handleException(e: ConstraintViolationException, request: HttpServletRequest): RestError {
-        return RestError(
-                status = 400,
-                code = PubBizCodes.C_999.code,
-                message = "参数校验错误",
-                details = e.constraintViolations.asSequence().map { it.toMessage() }.toSet()
-        )
+    override fun handleException(ex: Exception): RestError? {
+        if (shouldApplyTo("org.valiktor.ConstraintViolationException", ex)) {
+            val e = ex as ConstraintViolationException
+            return RestError(
+                    status = 400,
+                    code = PubBizCodes.C_999.code,
+                    message = "参数校验错误",
+                    details = e.constraintViolations.asSequence().map { it.toMessage() }.toSet()
+            )
+        }
+        return null
     }
 }
