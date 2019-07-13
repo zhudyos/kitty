@@ -3,13 +3,14 @@ package io.zhudy.kitty.restful.handlers
 import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
 import org.springframework.core.NestedExceptionUtils
+import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.web.HttpMediaTypeNotSupportedException
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-@Order(Int.MIN_VALUE + 1000)
+@Order(Ordered.LOWEST_PRECEDENCE)
 class HttpMediaTypeNotSupportedExceptionHandler : AbstractRestExceptionHandler() {
 
     override fun handleException(ex: Exception): RestError? {

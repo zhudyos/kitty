@@ -1,6 +1,6 @@
 package io.zhudy.kitty.restful
 
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * `RESTful` 错误信息返回。
@@ -17,10 +17,11 @@ import java.time.ZonedDateTime
  * @author Kevin Zou (kevinz@weghst.com)
  */
 class RestError(
-        val timestamp: ZonedDateTime = ZonedDateTime.now(),
+        val timestamp: OffsetDateTime = OffsetDateTime.now(),
         val traceId: String = "",
         val status: Int,
         var path: String = "",
+        var method: String = "",
         val code: Int,
         val message: String,
         val details: Set<Any> = emptySet(),

@@ -5,12 +5,13 @@ import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
 import io.zhudy.kitty.web.MissingRequestParameterException
 import org.springframework.core.NestedExceptionUtils
+import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-@Order(Int.MIN_VALUE + 1000)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
 class MissingRequestParameterExceptionHandler : AbstractRestExceptionHandler() {
 
     override fun handleException(ex: Exception): RestError? {

@@ -3,15 +3,19 @@ package io.zhudy.kitty.web
 import io.zhudy.kitty.auth.UserContext
 import io.zhudy.kitty.biz.BizCodeException
 import io.zhudy.kitty.biz.PubBizCodes
+import io.zhudy.kitty.util.TracingUtils
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.attributeOrNull
 import org.springframework.web.servlet.function.paramOrNull
 import org.springframework.web.servlet.function.remoteAddressOrNull
-import java.util.*
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
+/**
+ * 业务追踪 ID。
+ */
+const val TRACE_ID = "io.zhudy.traceId"
 private const val HTTP_PATH_PARAM_NAME = "path"
 private const val HTTP_QUERY_PARAM_NAME = "query"
 
@@ -179,10 +183,19 @@ fun ServerRequest.ip(): String {
 }
 
 /**
- * 返回请求的 `request-id`。如果请求中不包括 `x-request-id` 则自动生成。
+ * 返回追踪 `trace-id`，在同一个请求中多次调用返回的 `trace-id` 相同。
+ *
+ * 如果请求中不包括 `x-request-id` 则自动生成。
  */
-fun ServerRequest.requestId(): String {
-    return headers().header("x-request-id").firstOrNull() ?: UUID.randomUUID().toString().replace("-", "")
+fun ServerRequest.traceId(): String {
+    var traceId = attributeOrNull(TRACE_ID)?.toString()
+    if (traceId != null) {
+        return traceId
+    }
+
+    traceId = headers().header("x-request-id").firstOrNull() ?: TracingUtils.traceId()
+    attributes()[TRACE_ID] = traceId
+    return traceId
 }
 
 /**
