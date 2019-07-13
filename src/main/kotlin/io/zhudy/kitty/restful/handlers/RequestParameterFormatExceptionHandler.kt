@@ -4,6 +4,7 @@ import io.zhudy.kitty.biz.PubBizCodes
 import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
 import io.zhudy.kitty.web.RequestParameterFormatException
+import org.springframework.core.NestedExceptionUtils
 import org.springframework.core.annotation.Order
 
 /**
@@ -14,7 +15,7 @@ class RequestParameterFormatExceptionHandler : AbstractRestExceptionHandler() {
 
     override fun handleException(ex: Exception): RestError? {
         if (shouldApplyTo("io.zhudy.kitty.web.RequestParameterFormatException", ex)) {
-            val e = ex as RequestParameterFormatException
+            val e = NestedExceptionUtils.getMostSpecificCause(ex) as RequestParameterFormatException
             return RestError(
                     status = 400,
                     code = PubBizCodes.C_999.code,

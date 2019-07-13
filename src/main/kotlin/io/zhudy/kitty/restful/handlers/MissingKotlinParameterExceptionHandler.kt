@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import io.zhudy.kitty.biz.PubBizCodes
 import io.zhudy.kitty.restful.AbstractRestExceptionHandler
 import io.zhudy.kitty.restful.RestError
+import org.springframework.core.NestedExceptionUtils
 import org.springframework.core.annotation.Order
 
 /**
@@ -14,7 +15,7 @@ class MissingKotlinParameterExceptionHandler : AbstractRestExceptionHandler() {
 
     override fun handleException(ex: Exception): RestError? {
         if (shouldApplyTo("com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException", ex)) {
-            val e = ex as MissingKotlinParameterException
+            val e = NestedExceptionUtils.getMostSpecificCause(ex) as MissingKotlinParameterException
             return RestError(
                     status = 400,
                     code = PubBizCodes.C_999.code,
