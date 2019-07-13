@@ -27,7 +27,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
-    maven { url "https://oss.jfrog.org/oss-snapshot-local" }
 }
 
 compileKotlin {
@@ -76,7 +75,7 @@ dependencies {
 
     compileOnly "org.mybatis:mybatis"
     compileOnly "com.github.pagehelper:pagehelper"
-
+    
     testImplementation "org.junit.jupiter:junit-jupiter"
     testImplementation "org.mockito:mockito-core:2.+"
 }
