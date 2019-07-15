@@ -179,7 +179,7 @@ fun ServerRequest.ip(): String {
     if (xff != null && xff.isNotEmpty()) {
         return xff[0]
     }
-    return remoteAddressOrNull()?.hostName ?: ""
+    return remoteAddressOrNull()?.run { address.hostAddress } ?: ""
 }
 
 /**
