@@ -20,7 +20,7 @@ class MissingRequestParameterExceptionHandler : AbstractRestExceptionHandler() {
             return RestError(
                     status = 400,
                     code = PubBizCodes.C_999.code,
-                    message = "在 \"${e.where}\" 的参数 \"${e.parameter}\" 不存在或为空"
+                    message = "在 \"${e.where}\" 的参数 \"${snakeCase.translate(e.parameter)}\" 不存在或为空"
             )
         }
         return null

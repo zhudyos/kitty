@@ -20,7 +20,7 @@ class MissingKotlinParameterExceptionHandler : AbstractRestExceptionHandler() {
             return RestError(
                     status = 400,
                     code = PubBizCodes.C_999.code,
-                    message = "缺少参数 ${e.parameter.name}"
+                    message = "缺少参数 ${snakeCase.translate(e.parameter.name)}"
             )
         }
         return null

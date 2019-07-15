@@ -20,7 +20,7 @@ class RequestParameterFormatExceptionHandler : AbstractRestExceptionHandler() {
             return RestError(
                     status = 400,
                     code = PubBizCodes.C_999.code,
-                    message = "在 \"${e.where}\" 的参数 \"${e.parameter}\"：${e.msg}"
+                    message = "在 \"${e.where}\" 的参数 \"${snakeCase.translate(e.parameter)}\"：${e.msg}"
             )
         }
         return null
