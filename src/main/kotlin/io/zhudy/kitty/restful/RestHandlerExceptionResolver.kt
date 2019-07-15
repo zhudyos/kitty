@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.GenericHttpMessageConverter
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServletServerHttpResponse
+import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.HandlerExceptionResolver
 import org.springframework.web.servlet.ModelAndView
 import java.io.IOException
@@ -65,6 +66,11 @@ class RestHandlerExceptionResolver(private val messageConverters: List<HttpMessa
     }
 
     override fun resolveException(request: HttpServletRequest, response: HttpServletResponse, handler: Any?, ex: Exception): ModelAndView? {
+        // 不处理跨域请求校验
+        if (CorsUtils.isPreFlightRequest(request)) {
+            return null
+        }
+
         response.setHeader("cache-control", "no-store")
 
         try {
