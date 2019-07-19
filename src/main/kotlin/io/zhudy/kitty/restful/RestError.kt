@@ -1,6 +1,6 @@
 package io.zhudy.kitty.restful
 
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
 
 /**
  * `RESTful` 错误信息返回。
@@ -17,7 +17,7 @@ import java.time.OffsetDateTime
  * @author Kevin Zou (kevinz@weghst.com)
  */
 class RestError(
-        val timestamp: OffsetDateTime = OffsetDateTime.now(),
+        val timestamp: LocalDateTime = LocalDateTime.now(),
         val traceId: String = "",
         val status: Int,
         var path: String = "",
