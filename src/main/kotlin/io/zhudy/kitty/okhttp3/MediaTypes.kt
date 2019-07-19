@@ -25,7 +25,7 @@ import okhttp3.MediaType
 object MediaTypes {
 
     /**
-     * `application/json; charset=utf-8`.
+     * `application/json`.
      */
-    val APPLICATION_JSON = MediaType.parse("application/json; charset=utf-8")
+    val APPLICATION_JSON = MediaType.parse("application/json")!!
 }
