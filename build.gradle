@@ -26,6 +26,10 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+configurations {
+    testImplementation.extendsFrom compileOnly
+}
+
 dependencyManagement {
     imports {
         mavenBom "org.apache.logging.log4j:log4j-bom:2.12.0"
@@ -43,6 +47,8 @@ dependencyManagement {
         dependency "io.lettuce:lettuce-core:5.1.6.RELEASE"
         dependency "com.github.pagehelper:pagehelper:5.1.8"
 
+        dependency "io.mockk:mockk:1.9.3"
+        dependency "org.assertj:assertj-core:3.12.2"
         dependency "org.junit.jupiter:junit-jupiter:5.5.0"
     }
 }
@@ -50,9 +56,8 @@ dependencyManagement {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib"
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
     api "org.apache.logging.log4j:log4j-api"
-    
+
     compileOnly "javax.servlet:javax.servlet-api"
     compileOnly "org.springframework:spring-webmvc"
     compileOnly "org.springframework:spring-webflux"
@@ -67,7 +72,10 @@ dependencies {
     compileOnly "org.mybatis:mybatis"
     compileOnly "com.github.pagehelper:pagehelper"
 
+    testImplementation "io.mockk:mockk"
+    testImplementation "org.assertj:assertj-core"
     testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.springframework:spring-test"
 }
 
 license {
