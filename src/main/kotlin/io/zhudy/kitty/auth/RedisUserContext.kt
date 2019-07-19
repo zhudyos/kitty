@@ -49,10 +49,12 @@ class RedisUserContext(
         }
 
         override fun putAll(from: Map<out String, String?>) {
-            val comms = redisConnection.sync()
-            from.forEach {
-                comms.hset(userAttrsKey, it.key, it.value)
+            if (from.isEmpty()) {
+                return
             }
+
+            val comms = redisConnection.sync()
+            comms.hmset(userAttrsKey, from.toMap())
         }
 
         override fun remove(field: String): String? {
