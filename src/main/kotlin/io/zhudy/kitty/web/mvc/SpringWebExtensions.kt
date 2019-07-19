@@ -1,9 +1,13 @@
-package io.zhudy.kitty.web
+package io.zhudy.kitty.web.mvc
 
 import io.zhudy.kitty.auth.UserContext
 import io.zhudy.kitty.biz.BizCodeException
 import io.zhudy.kitty.biz.PubBizCodes
+import io.zhudy.kitty.domain.Pageable
+import io.zhudy.kitty.domain.parseSort
 import io.zhudy.kitty.util.TracingUtils
+import io.zhudy.kitty.web.MissingRequestParameterException
+import io.zhudy.kitty.web.RequestParameterFormatException
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.attributeOrNull
 import org.springframework.web.servlet.function.paramOrNull
@@ -86,7 +90,7 @@ fun ServerRequest.queryBoolean(name: String) = requestBooleanParam(this, HTTP_QU
  * @param defValue 如果指定的参数不存在则返回默认值
  */
 fun ServerRequest.queryBoolean(name: String, defValue: Boolean): Boolean {
-    val v = this.paramOrNull(name) ?: return defValue
+    val v = this.paramOrNull(name)?.toLowerCase() ?: return defValue
     return v == "true" || v == "1" || v == "on"
 }
 
@@ -105,7 +109,7 @@ fun ServerRequest.queryInt(name: String) = requestIntParam(this, HTTP_QUERY_PARA
  */
 fun ServerRequest.queryInt(name: String, defValue: Int): Int {
     val v = this.paramOrNull(name) ?: return defValue
-    return v.toIntOrNull() ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 int 数字")
+    return v.toIntOrNull() ?: defValue
 }
 
 /**
@@ -123,7 +127,7 @@ fun ServerRequest.queryLong(name: String) = requestLongParam(this, HTTP_QUERY_PA
  */
 fun ServerRequest.queryLong(name: String, defValue: Long): Long {
     val v = this.paramOrNull(name) ?: return defValue
-    return v.toLongOrNull() ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 long 数字")
+    return v.toLongOrNull() ?: defValue
 }
 
 /**
@@ -141,8 +145,7 @@ fun ServerRequest.queryDouble(name: String) = requestDoubleParam(this, HTTP_QUER
  */
 fun ServerRequest.queryDouble(name: String, defValue: Double): Double {
     val v = this.paramOrNull(name) ?: return defValue
-    return v.toDoubleOrNull()
-            ?: throw RequestParameterFormatException(HTTP_QUERY_PARAM_NAME, name, "\"$v\" 非法的 double 数字")
+    return v.toDoubleOrNull() ?: defValue
 }
 
 /**
@@ -204,6 +207,31 @@ fun ServerRequest.traceId(): String {
 fun ServerRequest.userContext(): UserContext {
     return attributeOrNull(UserContext.HTTP_REQUEST_ATTRIBUTE_KEY) as? UserContext
             ?: throw BizCodeException(PubBizCodes.C_500, "缺少 UserContext")
+}
+
+/**
+ * 公共的包装参数对象。
+ */
+fun ServerRequest.packParams() = PackParams(this)
+
+/**
+ * 包装公共参数。
+ */
+class PackParams(private val request: ServerRequest) {
+
+    /**
+     * 返回排序对象。
+     */
+    fun sort() = parseSort(request.paramOrNull("sort"))
+
+    /**
+     * 返回分页参数。
+     */
+    fun page(): Pageable {
+        val p = request.queryInt("page")
+        val s = request.queryInt("size")
+        return Pageable(p, s)
+    }
 }
 
 // =================================================================================================================

@@ -1,4 +1,4 @@
-package io.zhudy.kitty.web.security
+package io.zhudy.kitty.web.mvc
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -10,13 +10,14 @@ import io.zhudy.kitty.auth.UserContext
 import io.zhudy.kitty.biz.BizCodeException
 import io.zhudy.kitty.biz.PubBizCodes
 import io.zhudy.kitty.service.AuthorityService
-import io.zhudy.kitty.web.userContext
 import org.springframework.web.servlet.function.RouterFunctions
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.attributeOrNull
 
 /**
+ * `access_token` 认证。
+ *
  * @author Kevin Zou (kevinz@weghst.com)
  */
 fun securityHandle(
@@ -70,13 +71,19 @@ fun securityHandle(
 }
 
 /**
- *
+ * 权限认证。
  */
 fun authorityHandle(service: AuthorityService, next: (ServerRequest) -> ServerResponse) = { request: ServerRequest ->
     val uc = request.userContext()
     val matchingUri = request.attributeOrNull(RouterFunctions.MATCHING_PATTERN_ATTRIBUTE) as? String
             ?: throw IllegalStateException("not found ${RouterFunctions.MATCHING_PATTERN_ATTRIBUTE}")
-    if (!service.checkAuthority(matchingUri, uc)) {
+
+    val r = AuthorityService.Request(
+            uri = matchingUri,
+            method = request.methodName(),
+            contentType = request.headers().header("content-type").firstOrNull()
+    )
+    if (!service.checkAuthority(r, uc)) {
         throw BizCodeException(PubBizCodes.C_403, "您没有权限访问该资源")
     }
     next(request)

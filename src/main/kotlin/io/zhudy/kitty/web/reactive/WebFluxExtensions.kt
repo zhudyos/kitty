@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.zhudy.kitty.web
+package io.zhudy.kitty.web.reactive
 
 import io.zhudy.kitty.domain.Pageable
-import io.zhudy.kitty.domain.Sort
 import io.zhudy.kitty.domain.parseSort
 import io.zhudy.kitty.web.Constants.HTTP_PATH_PARAM_NAME
 import io.zhudy.kitty.web.Constants.HTTP_QUERY_PARAM_NAME
+import io.zhudy.kitty.web.MissingRequestParameterException
+import io.zhudy.kitty.web.RequestParameterFormatException
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -95,9 +96,37 @@ fun ServerRequest.queryBoolean(name: String) = requestBooleanParam(this, HTTP_QU
 /**
  * 返回 `query` 参数.
  *
+ * `boolean` 取值设定.
+ *
+ * - true/false
+ * - 1/not 1
+ * - on/off
+ *
+ * @param name 参数名称
+ * @param defValue 如果指定的参数不存在则返回默认值
+ */
+fun ServerRequest.queryBoolean(name: String, defValue: Boolean): Boolean {
+    val v = this.queryParam(name).orElse(null) ?: return defValue
+    return v == "true" || v == "1" || v == "on"
+}
+
+/**
+ * 返回 `query` 参数.
+ *
  * @param name 参数名称
  */
 fun ServerRequest.queryInt(name: String) = requestIntParam(this, HTTP_QUERY_PARAM_NAME, name)
+
+/**
+ * 返回 `query` 参数.
+ *
+ * @param name 参数名称
+ * @param defValue 如果指定的参数不存在则返回默认值
+ */
+fun ServerRequest.queryInt(name: String, defValue: Int): Int {
+    val v = this.queryParam(name).orElse(null) ?: return defValue
+    return v.toIntOrNull() ?: defValue
+}
 
 /**
  * 返回 `query` 参数.
@@ -110,8 +139,30 @@ fun ServerRequest.queryLong(name: String) = requestLongParam(this, HTTP_QUERY_PA
  * 返回 `query` 参数.
  *
  * @param name 参数名称
+ * @param defValue 如果指定的参数不存在则返回默认值
+ */
+fun ServerRequest.queryLong(name: String, defValue: Long): Long {
+    val v = this.queryParam(name).orElse(null) ?: return defValue
+    return v.toLongOrNull() ?: defValue
+}
+
+/**
+ * 返回 `query` 参数.
+ *
+ * @param name 参数名称
  */
 fun ServerRequest.queryDouble(name: String) = requestDoubleParam(this, HTTP_QUERY_PARAM_NAME, name)
+
+/**
+ * 返回 `query` 参数.
+ *
+ * @param name 参数名称
+ * @param defValue 如果指定的参数不存在则返回默认值
+ */
+fun ServerRequest.queryDouble(name: String, defValue: Double): Double {
+    val v = this.queryParam(name).orElse(null) ?: return defValue
+    return v.toDoubleOrNull() ?: defValue
+}
 
 /**
  * 返回 `query` 参数.
@@ -128,26 +179,34 @@ fun ServerRequest.queryString(name: String) = requestStringParam(this, HTTP_QUER
 fun ServerRequest.queryTrimString(name: String) = requestTrimStringParam(this, HTTP_QUERY_PARAM_NAME, name)
 
 /**
- * 排序参数。
+ * 公共的包装参数对象。
  */
-fun ServerRequest.sortParam(): Sort {
-    val s = this.queryParam("sort").orElse(null)
-    return parseSort(s)
-}
+fun ServerRequest.packParams() = PackParams(this)
 
 /**
- * 分页参数。
+ * 包装公共参数。
  */
-fun ServerRequest.pageParam(): Pageable {
-    val p = queryInt("page")
-    val s = queryInt("size")
-    return Pageable(p, s)
+class PackParams(private val request: ServerRequest) {
+
+    /**
+     * 返回排序对象。
+     */
+    fun sort() = parseSort(request.queryParam("sort").orElse(null))
+
+    /**
+     * 返回分页参数。
+     */
+    fun page(): Pageable {
+        val p = request.queryInt("page")
+        val s = request.queryInt("size")
+        return Pageable(p, s)
+    }
 }
 
 // =================================================================================================================
 
 /**
- *
+ * 响应对象。
  */
 fun ServerResponse.BodyBuilder.body(o: Any): Mono<ServerResponse> = body(BodyInserters.fromObject(o))
 
