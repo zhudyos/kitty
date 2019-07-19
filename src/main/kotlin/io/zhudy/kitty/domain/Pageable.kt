@@ -15,6 +15,9 @@
  */
 package io.zhudy.kitty.domain
 
+import io.zhudy.kitty.biz.BizCodeException
+import io.zhudy.kitty.biz.PubBizCodes
+
 /**
  * 分页查询参数对象。
  *
@@ -30,6 +33,25 @@ data class Pageable(
         val page: Int = 1,
         val size: Int = 15
 ) {
+
+    companion object {
+        /**
+         * 分页最大的记录数。
+         */
+        var maxSize = 1000
+    }
+
+    init {
+        if (page <= 0) {
+            throw BizCodeException(PubBizCodes.C_999, "page 必须大于 0")
+        }
+        if (size <= 0) {
+            throw BizCodeException(PubBizCodes.C_999, "size 必须大于 0")
+        }
+        if (size >= maxSize) {
+            throw BizCodeException(PubBizCodes.C_999, "size 不能大于 $maxSize")
+        }
+    }
 
     val offset get() = (page - 1) * size
     val begin get() = offset + 1
