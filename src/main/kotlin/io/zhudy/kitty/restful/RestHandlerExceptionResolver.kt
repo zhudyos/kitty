@@ -2,7 +2,7 @@ package io.zhudy.kitty.restful
 
 import io.zhudy.kitty.restful.handlers.*
 import io.zhudy.kitty.util.TracingUtils
-import io.zhudy.kitty.web.TRACE_ID
+import io.zhudy.kitty.web.mvc.TRACE_ID
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.ApplicationContext
@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.time.OffsetDateTime
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -70,7 +69,6 @@ class RestHandlerExceptionResolver(private val messageConverters: List<HttpMessa
         if (CorsUtils.isPreFlightRequest(request)) {
             return null
         }
-
         response.setHeader("cache-control", "no-store")
 
         try {
@@ -95,9 +93,10 @@ class RestHandlerExceptionResolver(private val messageConverters: List<HttpMessa
             response.status = rs.status
             writeEntityWithMessageConverters(rs, response)
         } catch (throwable: Throwable) {
+            response.status = 500
+
             val traceId = traceId(request)
             log.error("[{}] 服务器解决异常出错", traceId, throwable)
-            handleError(traceId, request, response)
         }
         return ModelAndView()
     }
@@ -115,15 +114,6 @@ class RestHandlerExceptionResolver(private val messageConverters: List<HttpMessa
                 code = 500,
                 message = ex.message ?: "服务器内部错误"
         )
-    }
-
-    private fun handleError(traceId: String, request: HttpServletRequest, response: HttpServletResponse) {
-        response.status = 500
-        response.characterEncoding = Charsets.UTF_8.name()
-        response.contentType = MediaType.APPLICATION_JSON_VALUE
-        val writer = response.writer
-        writer.write("""{"timestamp":"${OffsetDateTime.now()}","path":"${request.requestURI}","method":"${request.method}","trace_id":"$traceId","status":500,"code":500,"message":"***服务器内部错误***"}""")
-        writer.flush()
     }
 
     private fun stacktrace(ex: Exception): List<String> {
