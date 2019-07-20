@@ -89,9 +89,7 @@ internal class SpringWebExtensionsKtTests {
                         ))
                         .buildRequest(servletContext)
         )
-        assertThatThrownBy {
-            request.pathInt("v")
-        }.isInstanceOf(RequestParameterFormatException::class.java)
+        assertThatThrownBy { request.pathInt("v") }.isInstanceOf(RequestParameterFormatException::class.java)
     }
 
     @Test
@@ -103,9 +101,7 @@ internal class SpringWebExtensionsKtTests {
                         ))
                         .buildRequest(servletContext)
         )
-        assertThatThrownBy {
-            request.pathInt("v")
-        }.isInstanceOf(MissingRequestParameterException::class.java)
+        assertThatThrownBy { request.pathInt("v") }.isInstanceOf(MissingRequestParameterException::class.java)
     }
 
     @ParameterizedTest
@@ -326,9 +322,7 @@ internal class SpringWebExtensionsKtTests {
                 MockMvcRequestBuilders.get("/test")
                         .buildRequest(servletContext)
         )
-        assertThatThrownBy {
-            request.queryInt("v")
-        }.isInstanceOf(MissingRequestParameterException::class.java)
+        assertThatThrownBy { request.queryInt("v") }.isInstanceOf(MissingRequestParameterException::class.java)
     }
 
     @ParameterizedTest
