@@ -22,5 +22,8 @@ internal class PageTests {
             totalItems / p.size + 1
         }
         assertThat(page.totalPages).isEqualTo(expected)
+        assertThat(page.items).isEqualTo(items)
+        assertThat(page.totalItems).isEqualTo(totalItems)
+        assertThat(page.pageable).isEqualTo(p)
     }
 }
