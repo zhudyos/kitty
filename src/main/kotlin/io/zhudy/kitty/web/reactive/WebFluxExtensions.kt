@@ -17,14 +17,13 @@ package io.zhudy.kitty.web.reactive
 
 import io.zhudy.kitty.domain.Pageable
 import io.zhudy.kitty.domain.parseSort
+import io.zhudy.kitty.util.TracingUtils
 import io.zhudy.kitty.web.Constants.HTTP_PATH_PARAM_NAME
 import io.zhudy.kitty.web.Constants.HTTP_QUERY_PARAM_NAME
 import io.zhudy.kitty.web.MissingRequestParameterException
 import io.zhudy.kitty.web.RequestParameterFormatException
-import org.springframework.web.reactive.function.BodyInserters
+import io.zhudy.kitty.web.mvc.TRACE_ID
 import org.springframework.web.reactive.function.server.ServerRequest
-import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Mono
 
 /**
  * `webflux` 扩展函数。
@@ -74,13 +73,6 @@ fun ServerRequest.pathDouble(name: String) = requestDoubleParam(this, HTTP_PATH_
 fun ServerRequest.pathString(name: String) = requestStringParam(this, HTTP_PATH_PARAM_NAME, name)
 
 /**
- * 返回 `path` 参数并去除前后空格.
- *
- * @param name 参数名称
- */
-fun ServerRequest.pathTrimString(name: String) = requestTrimStringParam(this, HTTP_PATH_PARAM_NAME, name)
-
-/**
  * 返回 `query` 参数.
  *
  * `boolean` 取值设定.
@@ -106,7 +98,7 @@ fun ServerRequest.queryBoolean(name: String) = requestBooleanParam(this, HTTP_QU
  * @param defValue 如果指定的参数不存在则返回默认值
  */
 fun ServerRequest.queryBoolean(name: String, defValue: Boolean): Boolean {
-    val v = this.queryParam(name).orElse(null) ?: return defValue
+    val v = this.queryParam(name).orElse(null)?.toLowerCase() ?: return defValue
     return v == "true" || v == "1" || v == "on"
 }
 
@@ -178,6 +170,47 @@ fun ServerRequest.queryString(name: String) = requestStringParam(this, HTTP_QUER
  */
 fun ServerRequest.queryTrimString(name: String) = requestTrimStringParam(this, HTTP_QUERY_PARAM_NAME, name)
 
+// =================================================================================================================
+
+/**
+ * 返回客户端 IP 地址。
+ *
+ * 1. http header `x-real-ip`
+ * 2. http header `x-forwarded-for`
+ * 3. `remote address`
+ *
+ * 根据以上顺序获取客户端 IP。
+ */
+fun ServerRequest.ip(): String {
+    val realIp = headers().header("x-real-ip").firstOrNull()
+    if (realIp != null) {
+        return realIp
+    }
+    val xff = headers().header("x-forwarded-for").firstOrNull()?.split(",")
+    if (xff != null && xff.isNotEmpty()) {
+        return xff[0]
+    }
+
+    return remoteAddress().orElse(null)?.run { address.hostAddress } ?: ""
+}
+
+/**
+ * 返回追踪 `trace-id`，在同一个请求中多次调用返回的 `trace-id` 相同。
+ *
+ * 如果请求中不包括 `x-request-id` 则自动生成。
+ */
+fun ServerRequest.traceId(): String {
+    var traceId = attribute(TRACE_ID).orElse(null)?.toString()
+    if (traceId != null) {
+        return traceId
+    }
+
+    traceId = headers().header("x-request-id").firstOrNull() ?: TracingUtils.traceId()
+    attributes()[TRACE_ID] = traceId
+    return traceId
+}
+
+
 /**
  * 公共的包装参数对象。
  */
@@ -205,13 +238,6 @@ class PackParams(private val request: ServerRequest) {
 
 // =================================================================================================================
 
-/**
- * 响应对象。
- */
-fun ServerResponse.BodyBuilder.body(o: Any): Mono<ServerResponse> = body(BodyInserters.fromObject(o))
-
-
-// =================================================================================================================
 private fun requestBooleanParam(request: ServerRequest, where: String, name: String): Boolean {
     val v = requestStringParam(request, where, name).toLowerCase()
     return v == "true" || v == "1" || v == "on"
