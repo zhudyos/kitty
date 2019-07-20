@@ -4,7 +4,7 @@ import io.zhudy.kitty.auth.UserContext
 import io.zhudy.kitty.biz.BizCodeException
 import io.zhudy.kitty.biz.PubBizCodes
 import io.zhudy.kitty.domain.Pageable
-import io.zhudy.kitty.domain.parseSort
+import io.zhudy.kitty.domain.Sort
 import io.zhudy.kitty.util.TracingUtils
 import io.zhudy.kitty.web.MissingRequestParameterException
 import io.zhudy.kitty.web.RequestParameterFormatException
@@ -222,7 +222,7 @@ class PackParams(private val request: ServerRequest) {
     /**
      * 返回排序对象。
      */
-    fun sort() = parseSort(request.paramOrNull("sort"))
+    fun sort() = Sort.parse(request.paramOrNull("sort"))
 
     /**
      * 返回分页参数。

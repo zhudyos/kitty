@@ -16,7 +16,7 @@
 package io.zhudy.kitty.web.reactive
 
 import io.zhudy.kitty.domain.Pageable
-import io.zhudy.kitty.domain.parseSort
+import io.zhudy.kitty.domain.Sort
 import io.zhudy.kitty.util.TracingUtils
 import io.zhudy.kitty.web.Constants.HTTP_PATH_PARAM_NAME
 import io.zhudy.kitty.web.Constants.HTTP_QUERY_PARAM_NAME
@@ -224,7 +224,7 @@ class PackParams(private val request: ServerRequest) {
     /**
      * 返回排序对象。
      */
-    fun sort() = parseSort(request.queryParam("sort").orElse(null))
+    fun sort() = Sort.parse(request.queryParam("sort").orElse(null))
 
     /**
      * 返回分页参数。
