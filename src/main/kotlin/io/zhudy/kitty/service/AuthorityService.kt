@@ -25,18 +25,7 @@ import io.zhudy.kitty.auth.UserContext
 interface AuthorityService {
 
     /**
-     * @property uri 请求的`uri`
-     * @property method 请求的`method`
-     * @property contentType 请求的`content-type`
-     */
-    data class Request(
-            val uri: String,
-            val method: String,
-            val contentType: String?
-    )
-
-    /**
      * 校验用户是否有指定的访问权限。
      */
-    fun checkAuthority(request: Request, uc: UserContext): Boolean
+    fun checkAuthority(params: Map<String, Any?>, uc: UserContext): Boolean
 }
