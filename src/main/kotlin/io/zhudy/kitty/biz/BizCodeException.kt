@@ -39,18 +39,11 @@ class BizCodeException : RuntimeException {
     }
 
     /**
-     * 根据目标异常构建业务码异常。
-     */
-    constructor(bizCode: BizCode, e: Exception) : super(e) {
-        this.bizCode = bizCode
-    }
-
-    /**
      * 重写 message 方法, 在打印日志是会调用该方法打印日志信息。
      */
     override val message: String get() = super.message ?: bizCode.msg
 
     override fun toString(): String {
-        return BizCodeException::class.qualifiedName + "${BizCodeException::class.qualifiedName}: $message"
+        return "${BizCodeException::class.qualifiedName} - ${bizCode.code}: $message"
     }
 }

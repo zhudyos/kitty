@@ -15,9 +15,30 @@
  */
 package io.zhudy.kitty.biz
 
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 /**
  * @author Kevin Zou (kevinz@weghst.com)
  */
-internal class BizCodeExceptionTests
+internal class BizCodeExceptionTests {
+
+    @Test
+    fun constructor1() {
+        val b = PubBizCodes.C_0
+        val ex = BizCodeException(b)
+        assertThat(ex.bizCode).isEqualTo(b)
+        assertThat(ex.message).isEqualTo(b.msg)
+        assertThat(ex.toString()).contains(b.code.toString())
+    }
+
+    @Test
+    fun constructor2() {
+        val b = PubBizCodes.C_0
+        val message = "custom exception message"
+        val ex = BizCodeException(b, message)
+        assertThat(ex.bizCode).isEqualTo(b)
+        assertThat(ex.message).isEqualTo(message)
+        assertThat(ex.toString()).contains(b.code.toString())
+    }
+}
