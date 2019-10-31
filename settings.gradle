@@ -1,1 +1,6 @@
-rootProject.name = 'kitty'
+rootProject.name = "kitty"
+include ":core"
+include ":rest-problem"
+include ":extensions:okhttp"
+include ":extensions:spring-webflux"
+include ":extensions:spring-webmvc"
