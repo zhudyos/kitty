@@ -2,8 +2,11 @@ dependencies {
     api project(":rest-problem")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.springframework:spring-webmvc")
-    implementation("javax.servlet:javax.servlet-api")
-    implementation("org.springframework.data:spring-data-commons")
+    compileOnly("javax.servlet:javax.servlet-api")
+    compileOnly("org.springframework.data:spring-data-commons")
+
+    testImplementation("javax.servlet:javax.servlet-api")
+    testImplementation("org.springframework.data:spring-data-commons")
     testImplementation("org.springframework:spring-context")
     testImplementation("org.springframework:spring-test")
 }

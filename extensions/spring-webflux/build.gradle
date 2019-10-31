@@ -2,7 +2,9 @@ dependencies {
     api(project(":rest-problem"))
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.springframework:spring-webflux")
-    implementation("org.springframework.data:spring-data-commons")
+    compileOnly("org.springframework.data:spring-data-commons")
+
+    testImplementation("org.springframework.data:spring-data-commons")
     testImplementation("org.springframework:spring-context")
     testImplementation("org.springframework:spring-test")
 }
