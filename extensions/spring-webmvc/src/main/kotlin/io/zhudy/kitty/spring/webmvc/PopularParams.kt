@@ -30,36 +30,36 @@ import org.springframework.web.servlet.function.ServerRequest
  */
 class PopularParams(private val request: ServerRequest) {
 
-    private var sort: Sort? = null
-    private var pageable: Pageable? = null
-
+    private var _sort: Sort? = null
     /**
      * 返回排序对象。
      */
-    fun sort(): Sort {
-        var tmp = sort
-        if (tmp != null) {
+    val sort: Sort
+        get() {
+            var tmp = _sort
+            if (tmp != null) {
+                return tmp
+            }
+            tmp = request.param("sort").map(SortUtils::parse).orElse(Sort.unsorted())
+            _sort = tmp
             return tmp
         }
-        tmp = request.param("sort").map(SortUtils::parse).orElse(Sort.unsorted())
-        sort = tmp
-        return tmp
-    }
 
-
+    private var _pageable: Pageable? = null
     /**
      * 返回分页参数。
      */
-    fun pageable(): Pageable {
-        var tmp = pageable
-        if (tmp != null) {
+    val pageable: Pageable
+        get() {
+            var tmp = _pageable
+            if (tmp != null) {
+                return tmp
+            }
+            val p = request.queryInt("page") - 1
+            val s = request.queryInt("size")
+
+            tmp = PageRequest.of(p, s, sort)
+            _pageable = tmp
             return tmp
         }
-        val p = request.queryInt("page") - 1
-        val s = request.queryInt("size")
-
-        tmp = PageRequest.of(p, s, sort())
-        pageable = tmp
-        return tmp
-    }
 }

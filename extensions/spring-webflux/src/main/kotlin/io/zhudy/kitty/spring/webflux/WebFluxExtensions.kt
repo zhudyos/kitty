@@ -193,44 +193,45 @@ fun ServerRequest.queryTrimString(name: String) = requestTrimStringParam(this, "
  *
  * 根据以上顺序获取客户端 IP。
  */
-fun ServerRequest.ip(): String {
-    val realIp = headers().header("x-real-ip").firstOrNull()
-    if (realIp != null) {
-        return realIp
-    }
-    val xff = headers().header("x-forwarded-for").firstOrNull()?.split(",")
-    if (xff != null && xff.isNotEmpty()) {
-        return xff[0]
-    }
+val ServerRequest.ip: String
+    get() {
+        val realIp = headers().header("x-real-ip").firstOrNull()
+        if (realIp != null) {
+            return realIp
+        }
+        val xff = headers().header("x-forwarded-for").firstOrNull()?.split(",")
+        if (xff != null && xff.isNotEmpty()) {
+            return xff[0]
+        }
 
-    return remoteAddress().map { it.address.hostAddress }
-            .orElseThrow { IllegalStateException("未获取到客户端请求地址") }
-}
+        return remoteAddress().map { it.address.hostAddress }
+                .orElseThrow { IllegalStateException("未获取到客户端请求地址") }
+    }
 
 /**
  * 返回追踪 ID，在同一个请求中多次调用返回的 ID 相同。
  *
  * 如果请求中不包括 `x-request-id` 则自动生成。
  */
-fun ServerRequest.traceId(): String {
-    return attribute(TRACE_REQUEST_ATTRIBUTE).orElseGet {
+val ServerRequest.traceId: String
+    get() = attribute(TRACE_REQUEST_ATTRIBUTE).orElseGet {
         val traceId = headers().header(HTTP_HEADER_REQUEST_ID).firstOrNull() ?: TracingUtils.traceId()
         attributes()[TRACE_REQUEST_ATTRIBUTE] = traceId
         traceId
     }.toString()
-}
 
 /**
  * 公共的包装参数对象。
  */
-fun ServerRequest.popularParams(): PopularParams {
-    val name = "io.zhudy.kitty.webflux.popularParams"
-    return attribute(name).orElseGet {
-        val pp = PopularParams(this)
-        attributes()[name] = pp
-        pp
-    } as PopularParams
-}
+val ServerRequest.popularParams: PopularParams
+    get() {
+        val name = "io.zhudy.kitty.webflux.popularParams"
+        return attribute(name).orElseGet {
+            val pp = PopularParams(this)
+            attributes()[name] = pp
+            pp
+        } as PopularParams
+    }
 
 // =================================================================================================================
 

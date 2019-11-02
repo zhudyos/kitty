@@ -513,7 +513,7 @@ internal class SpringWebExtensionsKtTests {
                         .header("x-real-ip", ip)
                         .buildRequest(servletContext)
         )
-        assertThat(request.ip()).isEqualTo(ip)
+        assertThat(request.ip).isEqualTo(ip)
     }
 
     @Test
@@ -524,7 +524,7 @@ internal class SpringWebExtensionsKtTests {
                         .header("x-forwarded-for", StringJoiner(",").add(ip).add("192.168.1.1").toString())
                         .buildRequest(servletContext)
         )
-        assertThat(request.ip()).isEqualTo(ip)
+        assertThat(request.ip).isEqualTo(ip)
     }
 
     @Test
@@ -533,7 +533,7 @@ internal class SpringWebExtensionsKtTests {
                 MockMvcRequestBuilders.get("/test")
                         .buildRequest(servletContext)
         )
-        assertThat(request.ip()).isNotEmpty()
+        assertThat(request.ip).isNotEmpty()
     }
 
     @Test
@@ -542,8 +542,8 @@ internal class SpringWebExtensionsKtTests {
                 MockMvcRequestBuilders.get("/test")
                         .buildRequest(servletContext)
         )
-        val t1 = request.traceId()
-        val t2 = request.traceId()
+        val t1 = request.traceId
+        val t2 = request.traceId
         assertThat(t1).isEqualTo(t2)
     }
 
@@ -554,8 +554,8 @@ internal class SpringWebExtensionsKtTests {
                         .header("x-request-id", TracingUtils.traceId())
                         .buildRequest(servletContext)
         )
-        val t1 = request.traceId()
-        val t2 = request.traceId()
+        val t1 = request.traceId
+        val t2 = request.traceId
         assertThat(t1).isEqualTo(t2)
     }
 
@@ -570,23 +570,23 @@ internal class SpringWebExtensionsKtTests {
                         .buildRequest(servletContext)
         )
 
-        val popularParams = request.popularParams()
+        val popularParams = request.popularParams
 
-        val sort = popularParams.sort()
+        val sort = popularParams.sort
         assertThat(sort.toList())
                 .isNotEmpty
                 .first()
                 .hasFieldOrPropertyWithValue("direction", Sort.Direction.ASC)
 
-        val p = popularParams.pageable()
-        assertThat(p.pageNumber).isEqualTo(1)
+        val p = popularParams.pageable
+        assertThat(p.pageNumber).isEqualTo(0)
         assertThat(p.pageSize).isEqualTo(15)
 
         // 恒等
-        val neoPopularParams = request.popularParams()
+        val neoPopularParams = request.popularParams
         assertThat(neoPopularParams).isEqualTo(popularParams)
-        assertThat(neoPopularParams.sort()).isEqualTo(sort)
-        assertThat(neoPopularParams.pageable()).isEqualTo(p)
+        assertThat(neoPopularParams.sort).isEqualTo(sort)
+        assertThat(neoPopularParams.pageable).isEqualTo(p)
     }
 
 }

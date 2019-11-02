@@ -437,7 +437,7 @@ internal class WebFluxExtensionsKtTests {
                 .header("x-real-ip", ip)
                 .header("x-forwarded-for", StringJoiner(",").add("192.168.1.1").toString())
                 .build()
-        assertThat(request.ip()).isEqualTo(ip)
+        assertThat(request.ip).isEqualTo(ip)
     }
 
     @Test
@@ -447,7 +447,7 @@ internal class WebFluxExtensionsKtTests {
                 .uri(URI.create("/test"))
                 .header("x-forwarded-for", StringJoiner(",").add(ip).add("192.168.1.1").toString())
                 .build()
-        assertThat(request.ip()).isEqualTo(ip)
+        assertThat(request.ip).isEqualTo(ip)
     }
 
     @Test
@@ -457,7 +457,7 @@ internal class WebFluxExtensionsKtTests {
                 .uri(URI.create("/test"))
                 .remoteAddress(InetSocketAddress(ip, 8080))
                 .build()
-        assertThat(request.ip()).isNotEmpty().isEqualTo(ip)
+        assertThat(request.ip).isNotEmpty().isEqualTo(ip)
     }
 
     @Test
@@ -465,7 +465,7 @@ internal class WebFluxExtensionsKtTests {
         val request = MockServerRequest.builder()
                 .uri(URI.create("/test"))
                 .build()
-        assertThatThrownBy { request.ip() }.isInstanceOf(IllegalStateException::class.java)
+        assertThatThrownBy { request.ip }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
@@ -473,8 +473,8 @@ internal class WebFluxExtensionsKtTests {
         val request = MockServerRequest.builder()
                 .uri(URI.create("/test"))
                 .build()
-        val t1 = request.traceId()
-        val t2 = request.traceId()
+        val t1 = request.traceId
+        val t2 = request.traceId
         assertThat(t1).isNotBlank().isEqualTo(t2)
     }
 
@@ -484,8 +484,8 @@ internal class WebFluxExtensionsKtTests {
                 .uri(URI.create("/test"))
                 .header("x-request-id", TracingUtils.traceId())
                 .build()
-        val t1 = request.traceId()
-        val t2 = request.traceId()
+        val t1 = request.traceId
+        val t2 = request.traceId
         assertThat(t1).isNotBlank().isEqualTo(t2)
     }
 
@@ -498,23 +498,23 @@ internal class WebFluxExtensionsKtTests {
                 .queryParam("size", "15")
                 .build()
 
-        val popularParams = request.popularParams()
+        val popularParams = request.popularParams
 
-        val sort = popularParams.sort()
+        val sort = popularParams.sort
         assertThat(sort.toList())
                 .isNotEmpty
                 .first()
                 .hasFieldOrPropertyWithValue("direction", Sort.Direction.ASC)
 
-        val p = popularParams.pageable()
-        assertThat(p.pageNumber).isEqualTo(1)
+        val p = popularParams.pageable
+        assertThat(p.pageNumber).isEqualTo(0)
         assertThat(p.pageSize).isEqualTo(15)
 
         // 恒等
-        val neoPopularParams = request.popularParams()
+        val neoPopularParams = request.popularParams
         assertThat(neoPopularParams).isEqualTo(popularParams)
-        assertThat(neoPopularParams.sort()).isEqualTo(sort)
-        assertThat(neoPopularParams.pageable()).isEqualTo(p)
+        assertThat(neoPopularParams.sort).isEqualTo(sort)
+        assertThat(neoPopularParams.pageable).isEqualTo(p)
     }
 
 }

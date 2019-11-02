@@ -60,7 +60,7 @@ class RestHandlerExceptionResolver(
         val printTraceEnabled = request.param(HTTP_QUERY_TRACE_ENABLED).map { true }.orElse(false)
         val restProblem = RestProblem(
                 timestamp = Instant.now(),
-                traceId = request.traceId(),
+                traceId = request.traceId,
                 path = request.path(),
                 method = request.methodName(),
                 status = problem.status,
