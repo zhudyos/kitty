@@ -53,7 +53,7 @@ class PopularParams(private val request: ServerRequest) {
         if (tmp != null) {
             return tmp
         }
-        val p = request.queryInt("page")
+        val p = request.queryInt("page") - 1
         val s = request.queryInt("size")
 
         tmp = PageRequest.of(p, s, sort())
