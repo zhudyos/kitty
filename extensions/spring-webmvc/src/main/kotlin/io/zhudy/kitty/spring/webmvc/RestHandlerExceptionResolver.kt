@@ -21,7 +21,6 @@ import io.zhudy.kitty.rest.problem.RestProblem
 import io.zhudy.kitty.rest.problem.RestProblemResolver
 import io.zhudy.kitty.rest.problem.RestTracingUtils
 import io.zhudy.kitty.rest.problem.RestTracingUtils.HTTP_QUERY_TRACE_ENABLED
-import io.zhudy.kitty.rest.problem.RestTracingUtils.PROBLEM_MEDIA_TYPE
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.message.MessageFactory2
 import org.springframework.http.HttpStatus
@@ -47,7 +46,6 @@ class RestHandlerExceptionResolver(
 ) : HandlerExceptionResolver {
 
     private val log = LogManager.getLogger()
-    private val problemMediaType = MediaType.parseMediaType(PROBLEM_MEDIA_TYPE)
 
     override fun resolveException(httpRequest: HttpServletRequest, httpResponse: HttpServletResponse, handler: Any?,
                                   ex: Exception): ModelAndView? {
@@ -83,7 +81,7 @@ class RestHandlerExceptionResolver(
             httpResponse.characterEncoding = "UTF-8"
             val response = ServletServerHttpResponse(httpResponse)
             response.setStatusCode(HttpStatus.resolve(restProblem.status))
-            response.headers.contentType = problemMediaType
+            response.headers.contentType = MediaType.APPLICATION_PROBLEM_JSON
             mapper.writeValue(response.body, restProblem)
             return ModelAndView()
         } catch (e: JsonProcessingException) {

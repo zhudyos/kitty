@@ -21,7 +21,6 @@ import io.zhudy.kitty.rest.problem.RestProblem
 import io.zhudy.kitty.rest.problem.RestProblemResolver
 import io.zhudy.kitty.rest.problem.RestTracingUtils
 import io.zhudy.kitty.rest.problem.RestTracingUtils.HTTP_QUERY_TRACE_ENABLED
-import io.zhudy.kitty.rest.problem.RestTracingUtils.PROBLEM_MEDIA_TYPE
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.message.MessageFactory2
 import org.springframework.core.io.buffer.DataBufferUtils
@@ -46,7 +45,6 @@ class RestWebExceptionHandler(
 ) : WebExceptionHandler {
 
     private val log = LogManager.getLogger()
-    private val problemMediaType = MediaType.parseMediaType(PROBLEM_MEDIA_TYPE)
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         val response = exchange.response
@@ -84,7 +82,7 @@ class RestWebExceptionHandler(
 
         return try {
             val buffer = response.bufferFactory().wrap(mapper.writeValueAsBytes(restProblem))
-            response.headers.contentType = problemMediaType
+            response.headers.contentType = MediaType.APPLICATION_PROBLEM_JSON
             response.statusCode = HttpStatus.resolve(problem.status)
             response.writeWith(Mono.just(buffer)).doOnError { DataBufferUtils.release(buffer) }
         } catch (e: JsonProcessingException) {

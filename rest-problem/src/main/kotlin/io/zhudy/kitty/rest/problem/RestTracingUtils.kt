@@ -26,10 +26,6 @@ object RestTracingUtils {
     /**
      *
      */
-    const val PROBLEM_MEDIA_TYPE = "application/problem+json"
-    /**
-     *
-     */
     const val HTTP_QUERY_TRACE_ENABLED = "trace"
     /**
      *
