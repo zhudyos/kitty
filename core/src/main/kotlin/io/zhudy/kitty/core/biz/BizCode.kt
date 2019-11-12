@@ -80,6 +80,11 @@ interface BizCode {
         val C404: BizCode = GeneralCode(404, "未找到资源", 404)
 
         /**
+         * 资源冲突。
+         */
+        val C409: BizCode = GeneralCode(409, "资源冲突", 409)
+
+        /**
          * 不支持的请求类型。通常指 HTTP `content-type` 错误。
          */
         val C415: BizCode = GeneralCode(415, "不支持的请求类型", 415)
@@ -97,7 +102,7 @@ interface BizCode {
          *
          * 示例：数据库已经存在用户名为 `tom` 的数据，在次提交用户名为 `tom` 数据保存时。
          */
-        val C810: BizCode = GeneralCode(800, "主键、唯一键冲突", 400)
+        val C810: BizCode = GeneralCode(800, "主键、唯一键冲突", 409)
 
         /**
          * 数据修改异常，受影响的行记录数不正确，**事务回滚**。
@@ -107,18 +112,18 @@ interface BizCode {
         val C811: BizCode = GeneralCode(811, "数据修改异常，受影响的行记录数不正确", 500)
 
         /**
-         * 值的数据类型不正确。
+         * 数据类型错误。
          *
          * 示例：当年龄 `age` 为 `number` 类型时，客户端提交的参数值类型为 `string`。
          */
-        val C998: BizCode = GeneralCode(998, "参数类型错误", 400)
+        val C998: BizCode = GeneralCode(998, "数据类型错误", 400)
 
         /**
-         * 值的数据格式不正确。
+         * 数据格式错误。
          *
          * 示例：当生日 `birthday` 为 `2000-08-12` 格式时，客户端提交的参数格式为 `2000/08/12`。
          */
-        val C999: BizCode = GeneralCode(999, "参数格式错误", 400)
+        val C999: BizCode = GeneralCode(999, "数据格式错误", 400)
 
     }
 
