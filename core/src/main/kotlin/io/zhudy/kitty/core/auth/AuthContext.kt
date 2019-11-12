@@ -34,10 +34,6 @@ interface AuthContext {
      */
     val token: String
     /**
-     * 当前请求的链路跟踪 ID。
-     */
-    val traceId: String
-    /**
      * 用户账号 ID。
      */
     val uid: Int
@@ -53,6 +49,12 @@ interface AuthContext {
      * @see UnsupportedOperationException
      */
     val nickname: String
+    /**
+     * 用户头像 URL。
+     *
+     * @see UnsupportedOperationException
+     */
+    val avatar: String
     /**
      * 用户扩展属性。
      */
