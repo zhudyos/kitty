@@ -1,3 +1,6 @@
 subprojects {
     group "io.zhudy.kitty.extensions"
 }
+
+jar.enabled = false
+install.enabled = false

@@ -89,3 +89,13 @@ allprojects {
         mavenCentral()
     }
 }
+
+subprojects {
+    jar {
+        baseName "${rootProject.name}-${project.name}"
+    }
+}
+
+// disabled tasks
+jar.enabled = false
+install.enabled = false
