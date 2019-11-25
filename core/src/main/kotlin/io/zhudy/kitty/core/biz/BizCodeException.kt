@@ -47,7 +47,7 @@ class BizCodeException : RuntimeException {
      * @param bizCode 业务错误码
      * @param message 错误描述
      */
-    constructor(bizCode: BizCode, message: String) : super(message) {
+    constructor(bizCode: BizCode, message: String?) : super(message) {
         this.bizCode = bizCode
         this.developerMessage = message
     }
@@ -60,7 +60,7 @@ class BizCodeException : RuntimeException {
      */
     constructor(bizCode: BizCode, cause: Throwable) : super(cause) {
         this.bizCode = bizCode
-        this.developerMessage = null
+        this.developerMessage = cause.message
     }
 
     /**
@@ -70,7 +70,7 @@ class BizCodeException : RuntimeException {
      * @param message 错误描述
      * @param cause 错误原因
      */
-    constructor(bizCode: BizCode, message: String, cause: Throwable) : super(message, cause) {
+    constructor(bizCode: BizCode, message: String?, cause: Throwable) : super(message, cause) {
         this.bizCode = bizCode
         this.developerMessage = message
     }
